@@ -37,13 +37,10 @@ const Hamburger = function(name) {
   switch (name) {
     case '鸡腿堡':
       return new ChickenBurger()
-      break
     case '牛肉汉堡':
       return new BeefBurger()
-      break
     case '蔬菜汉堡':
       return new VeggieBurger()
-      break
     default:
       throw new Error('对不起，本店没有你想要的汉堡')
   }
@@ -67,13 +64,10 @@ class Hamburger {
     switch (name) {
       case '鸡腿堡':
         return new Hamburger({name: '鸡腿堡', price: 12})
-        break
       case '牛肉汉堡':
         return new Hamburger({name: '牛肉汉堡', price: 15})
-        break
       case '蔬菜汉堡':
         return new Hamburger({name: '蔬菜汉堡', price: 10})
-        break
       default:
         throw new Error('对不起，本店没有你想要的汉堡')
     }
@@ -87,7 +81,7 @@ const chickenBuger = Hamburger.getHamburger('鸡腿堡')
 
 ### 工厂方法模式
 
-工厂方法模式**将实际创建对象的工作推迟到了子类中**，**工厂父类负责定义创建产品对象的公共接口**。
+工厂方法模式**将实际创建对象的工作推迟到了子类中**，**工厂父类负责定义创建产品对象的公共接口**。（ 但此处并没有推迟到了子类，只是放在了原型中 ）
 
 ```javascript
 const Hamburger = function(name) {
@@ -116,5 +110,95 @@ Hamburger.prototype = {
 }
 
 const chickenBuger = Hamburger('ChickenBuger')
+```
+
+### 抽象工厂模式
+
+> 「抽象」就是将复杂事物的一个或多个共有特征抽取出来的思维过程。
+
+可以看到，简单工厂与工厂方法模式都是**直接返回创建的实例**，但抽象工厂模式并不会直接返回创建的实例，而是用于对产品类簇的创建。也就是将各个工厂方法模式又抽象出来，找出了其中的共同特征。
+
+![&#x62BD;&#x8C61;&#x5DE5;&#x5382;&#x793A;&#x4F8B;](.gitbook/assets/ping-mu-kuai-zhao-20190620-11.17.22.png)
+
+#### 创建实体类
+
+```javascript
+// 汉堡类产品
+class ChickenBuger {
+  constructor() {
+    this.name = '鸡腿堡'
+    this.price = 12
+  }
+}
+
+class BeefBuger {
+  constructor() {
+    this.name = '牛肉堡'
+    this.price = 15
+  }
+}
+
+// 饮料类产品
+
+class Cola {
+  constructor() {
+    this.name = '可乐'
+    this.price = 5
+  }
+}
+
+class Sprite {
+  constructor() {
+    this.name = '雪碧'
+    this.price = 5
+  }
+}
+```
+
+#### 创建工厂类
+
+`ChickenBuger` 与 `BeefBuger` 同属于 `Hamburger` 类，`Cola` 与 `Sprite` 同属于 `Drink` 类。
+
+```javascript
+class Hamburger {
+  getInstance(name) {
+    switch(name) {
+      case 'ChickenBuger':
+        return new ChickenBuger()
+      case 'BeefBuger':
+        return new BeefBuger()
+    }
+  }
+}
+
+class Drink {
+  getInstance(name) {
+    switch(name) {
+      case 'Cola':
+        return new Cola()
+      case 'Sprite':
+        return new Sprite()
+    }
+  }
+}
+
+```
+
+#### 创建抽象工厂
+
+```javascript
+class KFC {
+  constructor(type) {
+    switch(type) {
+      case 'Hamburger':
+        return new Hamburger()
+      case 'Drink':
+        return new Drink()
+    }
+  }
+}
+
+const HamburgerFAC = new KFC('Hamburger')
+const chickenBuger = HamburgerFAC.getInstance('ChickenBuger')
 ```
 
