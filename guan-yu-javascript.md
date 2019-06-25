@@ -134,3 +134,57 @@ const renderMap = map => {
 renderMap( baiduMap )
 ```
 
+## 封装
+
+> 将信息隐藏
+
+封装包含对「数据的封装」：类似私有变量提供共有方法来获得，对「实现的封装」： 例如 lodash 中各种各样的方法，对「类型的封装」，隐藏掉对象的类型。对「变化的封装」。
+
+## 原型模式
+
+> 在以类为中心的面向对象编程语言中，类和对象的关系可以想象成铸模和铸件的关系，对象总是从类中创建而来。而在原型编程的思想中，类并不是必须的，一个对象是通过克隆另外一个对象所得到的
+
+在 JavaScript 中，根对象为 `Object.prototype` ，它是一个空对象，我们在 JavaScript 中遇到的每个对象，实际上都是从 `Object.prototype` 中克隆出来的。`Object.prototype` 对象就是它们的原型。
+
+### 特点
+
+* 所有的数据都是对象
+* 要得到一个对象，不是通过实例化类，而是找到一个对象作为原型并克隆它
+* 对象会记住它「构造器」的原型
+* 如果对象无法响应某个请求，它会把这个请求委托给它自己的原型
+
+举个栗子
+
+```javascript
+const obj = { name: 'haoqin', age: 23 }
+
+const A = function() {
+  this.age = 22
+}
+
+A.prototype = obj
+
+const a = new A()
+
+console.info(Object.getPrototypeOf(a) // { name: 'haoqin', age: 23 }
+console.info(a.age) // 22
+console.info(a.name) // 'haoqin'
+```
+
+A 并不是类，而是「函数构造器」，它既可以被用作普通函数也可以被用作构造器。当使用 `new` 运算符来调用此函数，此函数就是一个构造器。`new` 的实现如下
+
+```javascript
+function createObj() {
+  const obj = {} // 生成一个空对象
+  Constructor = [].shift.call(arguments) // 获得传入的函数构造器
+  obj.__proto__ = Constructor.prototype // 指向构造器的原型
+  Constructor.apply(obj, arguments) // 将构造器中的属性绑定到 obj 中
+}
+
+createObj(Constructor, ...params)
+```
+
+
+
+
+
