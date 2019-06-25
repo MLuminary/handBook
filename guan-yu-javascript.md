@@ -165,9 +165,10 @@ const A = function() {
 A.prototype = obj
 
 const a = new A()
-
-console.info(Object.getPrototypeOf(a) // { name: 'haoqin', age: 23 }
+// 对象会记住它「构造器」的原型
+console.info(Object.getPrototypeOf(a)) // { name: 'haoqin', age: 23 }
 console.info(a.age) // 22
+//如果对象无法响应某个请求，它会把这个请求委托给它自己的原型
 console.info(a.name) // 'haoqin'
 ```
 
