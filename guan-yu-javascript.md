@@ -179,7 +179,8 @@ function createObj() {
   const obj = {} // 生成一个空对象
   Constructor = [].shift.call(arguments) // 获得传入的函数构造器
   obj.__proto__ = Constructor.prototype // 指向构造器的原型
-  Constructor.apply(obj, arguments) // 将构造器中的属性绑定到 obj 中
+  const ret = Constructor.apply(obj, arguments) // 将构造器中的属性绑定到 obj 中
+  return typeof ret === 'object' ? ret : obj // 如果函数构造器本身就有返回值
 }
 
 createObj(Constructor, ...params)
