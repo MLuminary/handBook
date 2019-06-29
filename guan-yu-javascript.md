@@ -186,7 +186,47 @@ function createObj() {
 createObj(Constructor, ...params)
 ```
 
+## 高阶函数
 
+* 函数可以作为参数被传递
+* 函数可以作为返回值输出
 
+### 柯里化
 
+> 「currying」又称部分求值。一个 currying 的函数首先会接受一些参数，接受这些参数后，该函数不会立即根据参数求值，而是继续返回一个函数，刚才传入的参数在函数形成的闭包中被保存起来，等到函数真正被需要求值的时候，之前传入的参数都会被用于最后的求值
+
+```javascript
+// 柯里化函数
+const currying = function(fn) {
+  const args = [] // 将之前的传递的参数保留
+  return function() {
+    // 如果未传入参数，就将之前存储的参数传递给函数并调用
+    if (arguments.length === 0) {
+      return fn.apply(this, args)
+    } else {
+      // 将参数传递给 args 保存
+      ;[].push.apply(args, arguments)
+      // 返回自身函数
+      return arguments.callee
+    }
+  }
+}
+
+const cost = function(...params) {
+  let money = 0
+  for (let i = 0, l = params.length; i < l; i++) {
+    money += params[i]
+  }
+  return money
+}
+// 转化成 currying 函数
+const cost = currying(cost)
+cost(100)
+cost(200)
+cost(300)
+cost(400)
+cost(500)
+// 之前都没有在求值
+console.info(cost())
+```
 
