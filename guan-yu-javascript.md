@@ -195,6 +195,10 @@ createObj(Constructor, ...params)
 
 > 「currying」又称部分求值。一个 currying 的函数首先会接受一些参数，接受这些参数后，该函数不会立即根据参数求值，而是继续返回一个函数，刚才传入的参数在函数形成的闭包中被保存起来，等到函数真正被需要求值的时候，之前传入的参数都会被用于最后的求值
 
+#### 用途
+
+参数复用、提前返回、延迟计算
+
 ```javascript
 // 柯里化函数
 const currying = function(fn) {
@@ -220,13 +224,53 @@ const cost = function(...params) {
   return money
 }
 // 转化成 currying 函数
-const cost = currying(cost)
-cost(100)
-cost(200)
-cost(300)
-cost(400)
-cost(500)
+const costFnc = currying(cost)
+costFnc(100)
+costFnc(200)
+costFnc(300)
+costFnc(400)(500)
 // 之前都没有在求值
-console.info(cost())
+console.info(costFnc()) // 1500
 ```
+
+### 反柯里化
+
+> 「unCurrying」反柯里化函数，从字面讲，意义和用法跟函数柯里化相比正好相反，扩大适用范围，创建一个应用范围更广的函数。使得本来只有特定对象才适用的方法，扩展到更多的对象。
+
+```javascript
+Function.prototype.unCurrying = function() {
+  const self = this
+  return function() {
+    return Function.prototype.call.apply(self, arguments)
+  }
+}
+
+const obj = { length: 3, "0": 1, "1": 2, "2": 3 }
+
+const push = Array.prototype.push.unCurrying()
+
+push(obj, 2)
+
+console.info(obj) // { length: 4, "0": 1, "1": 2, "2": 3, "3": 2 }
+```
+
+此时 `self` 就是 `Array.prototype.push`, 返回的内容可以写成 
+
+```javascript
+ Function.prototype.call.apply(Array.prototype.push, arguments)
+```
+
+因为 `a.apply(b, params)` 其实就是 `b.a(param1, param2, ..)` 所以就等同于
+
+```javascript
+Array.prototype.push.call(param1, param2, ...)
+```
+
+那么 `push(obj, 2)` 其实就是
+
+```javascript
+push(obj, 2) = Array.prototype.push.call(obj , 2)
+```
+
+个人感觉「反柯里化」其实就起到了简洁代码的作用，不需要每次都写 `Array.prototype.push.call` 
 
