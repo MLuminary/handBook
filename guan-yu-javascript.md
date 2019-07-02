@@ -274,3 +274,49 @@ push(obj, 2) = Array.prototype.push.call(obj , 2)
 
 个人感觉「反柯里化」其实就起到了简洁代码的作用，不需要每次都写 `Array.prototype.push.call` 
 
+### 防抖动
+
+对于频繁触发的事件，其实没有必要每次都处理。例如注册页面的姓名输入框，对于输入的姓名需要检测有没有重复。我们不需要每次触发 `onChange` 事件都要去拿到 `value` 去调用 API 查看是否重复。因为用户每次敲击键盘都会触发 `onChange` ，所以在用户输入的过程中也会频繁的去调用 API，但此时都是无意义的检测，因为用户根本想要的不是之前的姓名。所以我们**可以在用户停止输入一段时间后再去调用 API**。
+
+防抖动就是在**你触发完事件并在 n 秒内不再触发此类事件的时候才会去执行**。
+
+```javascript
+function debounce(func, wait) {
+  let timeout
+  return function () {
+    if(timeout) clearTimeout(timeout)
+    timeout = setTimeout(() => {
+      // 绑定 this 传递参数
+      func.apply(this, arguments)
+    }, wait)
+  }
+}
+```
+
+但有的时候我们确实希望第一次是要执行的，就比如注册完要提交信息的按钮，连续点击时我们并不希望只能在不点击之后等待几秒才会提交，我们是希望第一次点击的时候就执行提交操作，此后再进行防抖动处理。
+
+```javascript
+function debounce(func, wait, immediate) {
+  let timeout
+  return function() {
+  // 此处 clearTimeout 并不会把 timeout 设置为 Null， timeout 还是之前的数值
+    if (timeout) {clearTimeout(timeout)}
+    if (immediate) {
+      // console.info(timeout)
+      const callNow = !timeout
+      // 等待 wait 秒后再设置 timeout 为 null，wait 秒内进入 timeout 会有值，因此 callNow 也会是 false
+      timeout = setTimeout(() => {
+        timeout = null
+      }, wait)
+      if (callNow) func.apply(this, arguments)
+    } else {
+      timeout = setTimeout(() => {
+        // 绑定 this 传递参数
+        func.apply(this, arguments)
+      }, wait)
+    }
+  }
+}
+
+```
+
