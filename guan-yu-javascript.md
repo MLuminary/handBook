@@ -320,3 +320,7 @@ function debounce(func, wait, immediate) {
 
 ```
 
+### 节流
+
+
+
