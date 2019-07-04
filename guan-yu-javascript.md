@@ -317,10 +317,79 @@ function debounce(func, wait, immediate) {
     }
   }
 }
-
 ```
 
 ### 节流
 
+射击游戏中每类枪都有其对应的射速，即使你鼠标一直按着不松开子弹也不会射成一条直线。
 
+节流就是**规定在一个单位时间内，只能触发一次函数。如果这个单位时间内触发多次函数，只有一次生效。**
+
+可以利用时间戳来实现
+
+```javascript
+function throttle(func, wait) {
+  let previous = 0
+  
+  return function() {
+    const now = +new Date()
+    if(now - previous > wait) {
+      func.apply(this, arguments)
+      previous = now
+    }
+  }
+}
+```
+
+也可以利用定时器
+
+```javascript
+function throttle(func, wait) {
+  let timer
+  
+  return function() {
+    if(!timer) {
+      timer = setTimeout(() => {
+        timer = null
+        func.apply(this, arguments)
+      }, wait);
+    }
+  }
+}
+```
+
+但这两种实现各有各的优点，也各有各的缺点。第一种方式的优点是会立马执行，缺点就是假如 `wait` 为 3s，当连续触发10 秒时，它会执行四次，分别是 0、3、6、9 秒，9 到 10 秒之间也在进行操作，但是并不能执行事件。第二种方式的缺点不会立马执行，优点就是当连续触发 10 秒时，它会在 3、6、9、12 秒的时候执行事件，因为在 9 秒过后就会触发并生成三秒后触发事件的定时器。
+
+为什么当我们停止触发时也需要最后执行一次事件呢，比如我们将滚动事件节流，获取其 `scrollTop`，如果只获得 9 秒时的 `scrollTop`， 显然是不对的，因为 9 到 10 秒还是触发了滚动事件。但我们获得 12 秒时的 `scrollTop` 时，就肯定是正确的，因为滚动事件早在 10 秒时已经停止了。
+
+因此我们需要将这两种方式结合
+
+```javascript
+function throttle(func, wait) {
+  let timer
+  let previous = 0
+
+  return function() {
+    const now = +new Date()
+    // 距离下次触发 func 的时间
+    const remaining = wait - (now - previous)
+    // 如果没有了剩余时间 (因为第一次进入时 remaning 也为负数, 所以第一次进入后也会立即执行)
+    if (remaining <= 0) {
+      func.apply(this, arguments)
+      previous = now
+    } else {
+      if (!timer) {
+        timer = setTimeout(() => {
+          // previous 为定时器结束后的时间戳
+          previous = +new Date()
+          timer = null
+          func.apply(this, arguments)
+        }, remaining)
+      }
+    }
+  }
+}
+```
+
+思路就是当距离上次触发时间大于 `wait` 秒时（因为 `previous` 默认为 0 ，所以第一次时也满足此种情况），立即执行函数，并设置 `previous` 为当前时间；当距离上次触发时间小于 `wait` 秒时，首先检查是否有 `timer` 如果没有的话就创建定时器，时间为**距离下次触发函数的时间**，然后设置 `previous` 为定时器结束后的时间，并在定时器结束后清空定时器。如果有 `timer` ，就不做任何事情。
 
