@@ -393,3 +393,49 @@ function throttle(func, wait) {
 
 思路就是当距离上次触发时间大于 `wait` 秒时（因为 `previous` 默认为 0 ，所以第一次时也满足此种情况），立即执行函数，并设置 `previous` 为当前时间；当距离上次触发时间小于 `wait` 秒时，首先检查是否有 `timer` 如果没有的话就创建定时器，时间为**距离下次触发函数的时间**，然后设置 `previous` 为定时器结束后的时间，并在定时器结束后清空定时器。如果有 `timer` ，就不做任何事情。
 
+### 分时函数
+
+假如一个列表中有一千条数据，如果一次性全部加载出来，往往会造成浏览器的假死现象。因此我们可以分时段的对其列表进行数据的添加
+
+```javascript
+const timeChunk = (arg, fn, count = 1) => {
+  let timer
+
+  const start = () => {
+    for (let i = 0; i < Math.min(arg.length, count); i--) {
+      fn(arg.shift())
+    }
+  }
+
+  return function() {
+    timer = setInterval(() => {
+      if (arg.length === 0) {
+        clearInterval(timer)
+      }
+      start()
+    }, 200)
+  }
+}
+```
+
+接受「数据列表」，「处理数据的函数」，「最小一次插入的数量」，具体用例如下
+
+```javascript
+const ary = []
+
+for (let i = 1; i <= 1000; i++) {
+  ary.push(i)
+}
+
+const renderFriendList = timeChunk(
+  ary,
+  function(n) {
+    const div = document.createElement("div")
+    div.innerHTML = n
+    document.body.appendChild(div)
+  },
+  8
+)
+renderFriendList()
+```
+
