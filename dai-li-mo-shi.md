@@ -49,3 +49,36 @@ proxyImage.setSrc( 'real_pic_url' )
 
 我们通过 `proxyImg` 间接的访问 `myImage` ，并在访问 `myImage` 过程中加入了额外的操作，比如在真正的图片加载好之前，将 `myImage` 的 `src` 先设置为本地的图片，待图片加载好之后再做替换。
 
+## 缓存代理
+
+> 缓存代理可以为一个开销很大的运算提供暂时的存储，在下次运算时，如果传递进来的参数跟之前完全一致，则可以直接返回之前的运算结果
+
+这里以一个简单的乘积计算作为例子，我们假装他非常耗时
+
+```javascript
+const mult = function() {
+  let a = 1
+  for (let i = 1; i < arguments.length; i++) {
+    a *= arguments[i]
+  }
+  return a
+}
+```
+
+下面我们加入缓存代理，输入相同参数时不需要再次计算
+
+```javascript
+const proxyMult = (function() {
+  const cache = {}
+  return function() {
+    const args = Array.prototype.join.call(arguments, ",")
+    if (args in cache) {
+      return cache[args]
+    }
+    return (cache[args] = mult.apply(this, arguments))
+  }
+})()
+```
+
+
+
