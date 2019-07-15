@@ -78,7 +78,60 @@ const proxyMult = (function() {
     return (cache[args] = mult.apply(this, arguments))
   }
 })()
+
+proxyMult( 1, 2, 3, 4 ); // 输出:24
+proxyMult( 1, 2, 3, 4 ); // 输出:24 此时并不需要再次计算
 ```
+
+### 用高阶函数动态创建代理
+
+如上所示，如果我们要再写一个加法操作的代理时，是还需要再为其编写一个 `proxyAdd` 方法的，这样显然是不符合我们的开闭原则的。
+
+假设现有如下的加法和乘法的耗时操作
+
+```javascript
+// 乘法
+const mult = function() {
+  let a = 1
+  for (let i = 1; i < arguments.length; i++) {
+    a *= arguments[i]
+  }
+  return a
+}
+
+// 加法
+const add = function() {
+  let a = 1
+  for (let i = 1; i < arguments.length; i++) {
+    a += arguments[i]
+  }
+  return a
+}
+```
+
+创建缓存代理的工厂
+
+```javascript
+const createProxyFactory = function(fn) {
+  const cache = [] // 用于缓存参数及结果
+  return function() {
+    // 当然这里对参数传递的顺序也需要相同，此处只是举个例子
+    const argString = Array.prototype.join.call(arguments, '')
+    // 如果参数之前传输过
+    if(argString in cache) {
+      return cache[argString]
+    }
+    return cache[argString] = fn.apply(this, arguments)
+  }
+}
+
+const proxyPlus = createProxyFactory( add )
+proxyPlus(1,2,3,4) // 10
+```
+
+## 小结
+
+代理模式包括许多小分类，在 JavaScript 开发中最常用的是「虚拟代理」和「缓存代理」。虽然代理 模式非常有用，但我们在编写业务代码的时候，往往不需要去预先猜测是否需要使用代理模式。 当真正发现不方便直接访问某个对象的时候，再编写代理也不迟
 
 
 
