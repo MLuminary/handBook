@@ -6,4 +6,5 @@
 * [工厂模式](gong-chang-mo-shi.md)
 * [策略模式](ce-lve-mo-shi.md)
 * [代理模式](dai-li-mo-shi.md)
+* [迭代器模式](die-dai-qi-mo-shi.md)
 
