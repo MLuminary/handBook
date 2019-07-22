@@ -8,4 +8,5 @@
 * [代理模式](dai-li-mo-shi.md)
 * [迭代器模式](die-dai-qi-mo-shi.md)
 * [订阅-发布模式](ding-yue-fa-bu-mo-shi.md)
+* [命令模式](ming-ling-mo-shi.md)
 
