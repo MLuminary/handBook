@@ -137,3 +137,49 @@ Tea 类基本如 coffee 类，再次就不写出来了。
 
 Beverage.prototype.init 被称为模板方法的原因是，该方法中封装了子类的算法框架，它作 为一个算法的模板，指导子类以何种顺序去执行哪些方法。在 Beverage.prototype.init 方法中， 算法内的每一个步骤都清楚地展示在我们眼前。
 
+## 钩子方法
+
+通过模板方法模式，我们在父类中封装了子类的算法框架。这些算法框架在正常状态下是适 用于大多数子类的，但如果有一些特别“个性”的子类呢?比如我们在饮料类 Beverage 中封装了 饮料的冲泡顺序:
+
+1. 把水煮沸
+2.  用沸水冲泡饮料 
+3. 把饮料倒进杯子 
+4.  加调料
+
+这 4 个冲泡饮料的步骤适用于咖啡和茶，在我们的饮料店里，根据这 4 个步骤制作出来的咖 啡和茶，一直顺利地提供给绝大部分客人享用。但有一些客人喝咖啡是不加调料\(糖和牛奶\)的。 既然 Beverage 作为父类，已经规定好了冲泡饮料的 4 个步骤，那么有什么办法可以让子类不受这 个约束呢?
+
+```javascript
+const Beverage = function() {}
+Beverage.prototype.boilWater = function() {
+  console.log('把水煮沸')
+}
+Beverage.prototype.brew = function() {
+  throw new Error('子类必须重写 brew 方法')
+}
+Beverage.prototype.pourInCup = function() {
+  throw new Error('子类必须重写 pourInCup 方法')
+}
+Beverage.prototype.addCondiments = function() {
+  throw new Error('子类必须重写 addCondiments 方法')
+}
+Beverage.prototype.customerWantsCondiments = function() {
+  return true // 默认需要调料
+}
+Beverage.prototype.init = function() {
+  this.boilWater()
+  this.brew()
+  this.pourInCup()
+  if (this.customerWantsCondiments()) {
+    this.addCondiments()
+  }
+}
+```
+
+当子类方法继承此方法时，就可以根据实际需要调用改写 customerWantsCondiments 来返回 true「需要」/ false 「不需要」去控制调料的添加
+
+## 小结
+
+模板方法模式是一种典型的通过封装变化提高系统扩展性的设计模式。在传统的面向对象语 言中，一个运用了模板方法模式的程序中，子类的方法种类和执行顺序都是不变的，所以我们把 这部分逻辑抽象到父类的模板方法里面。而子类的方法具体怎么实现则是可变的，于是我们把这 部分变化的逻辑封装到子类中。通过增加新的子类，我们便能给系统增加新的功能，并不需要改 动抽象父类以及其他子类，这也是符合开放封闭原则的。
+
+但在 JavaScript 中，我们很多时候都不需要依样画瓢地去实现一个模版方法模式，高阶函数 是更好的选择。
+
