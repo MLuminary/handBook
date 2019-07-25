@@ -11,4 +11,5 @@
 * [命令模式](ming-ling-mo-shi.md)
 * [组合模式](zu-he-mo-shi.md)
 * [模板方法模式](mo-ban-fang-fa-mo-shi.md)
+* [享元模式](xiang-yuan-mo-shi.md)
 

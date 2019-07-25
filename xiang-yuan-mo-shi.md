@@ -1,0 +1,68 @@
+---
+description: 享元模式是一种用于性能优化的模式。享元模式的核心是运用「共享技术」来有效支持大量细粒度的对象。
+---
+
+# 享元模式
+
+### 用例
+
+假设有个内衣工厂，目前的产品有 50 种男式内衣和 50 种女士内衣，为了推销产品，工厂决 定生产一些塑料模特来穿上他们的内衣拍成广告照片。 正常情况下需要 50 个男模特和 50 个女模特，然后让他们每人分别穿上一件内衣来拍照。不使用享元模式的情况下，在程序里也许会这样写:
+
+```javascript
+var Model = function(sex, underwear) {
+  this.sex = sex
+  this.underwear = underwear
+}
+Model.prototype.takePhoto = function() {
+  console.log('sex= ' + this.sex + ' underwear=' + this.underwear)
+}
+for (var i = 1; i <= 50; i++) {
+  var maleModel = new Model('male', 'underwear' + i)
+  maleModel.takePhoto()
+}
+for (var j = 1; j <= 50; j++) {
+  var femaleModel = new Model('female', 'underwear' + j)
+  femaleModel.takePhoto()
+}
+```
+
+如上，100 种内衣生成了 100 个模特，将来如果有 1000 种内衣，就必须要 1000 个模特。但其实虽然有 100 种内衣，但很显然并不需要 50 个男模特和 50 个女模特。其实男模特和女模特各有一个就足够了，他们可以分别穿上不同的内衣来拍照。
+
+代码如下：
+
+```javascript
+var Model = function(sex) {
+  this.sex = sex
+}
+Model.prototype.takePhoto = function() {
+  console.log('sex= ' + this.sex + ' underwear=' + this.underwear)
+}
+var maleModel = new Model('male'),
+  femaleModel = new Model('female')
+for (var i = 1; i <= 50; i++) {
+  maleModel.underwear = 'underwear' + i
+  maleModel.takePhoto()
+}
+for (var j = 1; j <= 50; j++) {
+  femaleModel.underwear = 'underwear' + j
+  femaleModel.takePhoto()
+}
+```
+
+可以看到，改进之后的代码，只需要两个对象便完成了相同的功能
+
+### 内部状态与外部状态
+
+享元模式要求将对象的属性划分为内部状态与外部状态「状态在这里通常指属性」。享元模式的目标是尽量减少共享对象的数量，区分内外部状态通常有以下几个准则
+
+* 内部状态存储于对象内部。
+* 内部状态可以被一些对象共享。
+* 内部状态独立于具体的场景，通常不会改变。
+* 外部状态取决于具体的场景，并根据场景而变化，外部状态不能被共享
+
+这样一来，我们便可以把所有内部状态相同的对象都指定为同一个对象，而外部状态可以从对象身上剥离出来，并储存在外部
+
+在上面的例子中，**性别是内部状态，内衣是外部状态，通过区分这两种状态，大大减少了系统中的对象数量**。通常来讲，内部状态有多少种组合，系统中便最多存在多少个对象，**因为性别通常只有男女两种，所以该内衣厂商最多只需要 2 个对象**
+
+
+
