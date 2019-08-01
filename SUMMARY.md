@@ -15,4 +15,5 @@
 * [职责链模式](zhi-ze-lian-mo-shi.md)
 * [中介者模式](zhong-jie-zhe-mo-shi.md)
 * [装饰者模式](untitled-1.md)
+* [状态模式](untitled-2.md)
 
