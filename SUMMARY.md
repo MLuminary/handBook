@@ -19,4 +19,5 @@
 * [适配器模式](untitled-3.md)
 * [设计模式原则](she-ji-mo-shi-yuan-ze/README.md)
   * [单一职责原则](she-ji-mo-shi-yuan-ze/dan-yi-zhi-ze-yuan-ze.md)
+  * [最少知识原则](she-ji-mo-shi-yuan-ze/zui-shao-zhi-shi-yuan-ze.md)
 
