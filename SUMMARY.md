@@ -17,4 +17,6 @@
 * [装饰者模式](untitled-1.md)
 * [状态模式](untitled-2.md)
 * [适配器模式](untitled-3.md)
+* [设计模式原则](she-ji-mo-shi-yuan-ze/README.md)
+  * [单一职责原则](she-ji-mo-shi-yuan-ze/dan-yi-zhi-ze-yuan-ze.md)
 
