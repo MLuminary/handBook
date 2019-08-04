@@ -52,7 +52,7 @@ public class Test {
 }
 ```
 
-为了让 `AnimalSound` 实现多态，需要写一个 `Animal` 类来让子类继承，其实只是为了解决类型的问题。JavaScript 因为其动态性就完全不存在这种问题。
+为了让 `AnimalSound` 实现多态，需要写一个 `Animal` 类来让子类继承，其实只是为了**解决类型的问题**。JavaScript 因为其动态性就完全不存在这种问题。
 
 ```javascript
 const makeSound = function( animal ) {
