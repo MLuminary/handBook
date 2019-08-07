@@ -20,84 +20,45 @@ description: 指一个类只有一个实例，且该类能自行创建这个实�
 
 ```javascript
 // 获取单独的实例
-var singleton = function(fn) {
-    var instance;
+const singleton = function(fn) {
+    const instance;
     return function() {
         return instance || (instance = fn.apply(this, arguments));
     }
 }
 
-// 创建遮罩层
-var createMask = function(){
-    // 创建div元素
-    var mask = document.createElement('div');
-    // 设置样式
-    mask.style.position = 'fixed';
-    mask.style.top = '0';
-    mask.style.right = '0';
-    mask.style.bottom = '0';
-    mask.style.left = '0';
-    mask.style.opacity = 'o.75';
-    mask.style.backgroundColor = '#000';
-    mask.style.display = 'none';
-    mask.style.zIndex = '98';
-    document.body.appendChild(mask);
-    // 单击隐藏遮罩层
-    mask.onclick = function(){
-        this.style.display = 'none';
-    }
-    return mask;
-};
-
-// 调用
-var oMask = singleton(createMask)()
-var eMask = singleton(createMask)()
-// 但是 oMask 与 eMask 不相等，获取 eMask 时其实也创建了新的 div
-```
-
-这种调用方法其实仅仅是获取到了 `createMask` 中的返回值，每次 `singleton()` 其实都会执行 `var instance` ,所以对 `instance` 的判断其实是没用的。正确调用我觉得应该如下
-
-```javascript
-const maskSingleton = singleton(createMask) // 先用一个变量接一下
-const oMask = maskSingleton()
-const eMask = maskSingleton() // 此时返回的还是之前已经创建的 mask
-```
-
-但其实上面的例子并未很好的体现出通用惰性单例模式的作用，而且`oMask` 其实是获取不到 `createMask` 原型链上的方法的「也可能原本作者就不想获取 = =」，但我们之前的举例都是使用构造函数的举例，所以接下来我也会用构造函数的例子来展现。
-
-```javascript
+// 个人认为这样也可以
 const singleton = function(Fn) {
-    var instance
+    const instance
     return function() {
         return instance || (instance = new Fn(...arguments))
     }
 }
 
-const Person = function(name){
-    this.name = name
-}
-
-Person.prototype.getName = function() {
-    return this.name
-}
-
-const Animal = function(name) {
-    this.name = name
-}
-
-Animal.prototype.getName = function() {
-    return this.name
-}
-
-const PersonSingleton = singleton(Person)
-const liSi = PersonSingleton('liSi')
-const zhangSan = PersonSingleton('zhangSan')
-
-const AnimalSingleton = singleton(Animal)
-const cat = AnimalSingleton('cat')
-const dog = AnimalSingleton('dog')
-
-console.info(zhangSan.getName()) // 'liSi'
-console.info(dog.getName()) // 'cat'
 ```
+
+我们再编写一个任务管理器的类
+
+```javascript
+const taskManage = function(name){
+    this.name = name
+}
+
+taskManage.prototype.getName = function() {
+    return this.name
+}
+```
+
+然后我们将 `taskManage` 变为单例
+
+```javascript
+const TaskManageSingleton = singleton(taskManage)
+const win = TaskManageSingleton('win')
+const mac = TaskManageSingleton('mac')
+
+console.info(win.getName()) // 'win'
+console.info(mac.getName()) // 'win'
+```
+
+可以看到第二次调用 `TaskManageSingleton` 时传入的参数并未生效，可以得知返回的是之前已经生成的 `TaskManage` 实例
 
