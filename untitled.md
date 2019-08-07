@@ -12,130 +12,11 @@ description: 指一个类只有一个实例，且该类能自行创建这个实�
 
 用一个变量来标记当前的类是否创建过对象，如果没创建过，返回创建之后的实例，如果之前已经创建过，**则返回之前创建过的实例**。
 
-### 使用构造函数自身的方法
+![&#x5355;&#x4F8B;&#x6A21;&#x5F0F;&#x300C;&#x4EFB;&#x52A1;&#x7BA1;&#x7406;&#x5668;&#x300D;](.gitbook/assets/image.png)
 
-```javascript
-// 构造函数
-function Singleton(name) {
-    this.name = name
-    this.instance = null
-}
-// 构造函数方法
-Singleton.prototype.getName = () => {
-    console.info(this.name)
-}
-// 单例控制
-Singleton.getInstance = (name) => {
-    if(!this.instance) {
-        this.instance = new Singleton(name)
-    }
-    return this.instance
-}
+### 通用的单例中间类
 
-const a = Singleton.getInstance('a')
-const b = Singleton.getInstance('b')
-
-console.info(a, b) // true
-```
-
-也可以使用闭包
-
-```javascript
-// 构造函数
-function Singleton(name) {
-    this.name = name
-}
-// 构造函数方法
-Singleton.prototype.getName = function() {
-    console.info(this.name)
-}
-// 获取类的实例
-Singleton.getInstance = (function() {
-    let instance = null
-    return function(name) {
-        if(!instance) {
-            instance = new Singleton(name)
-        }
-        return instance
-    }        
-})()
-
-// 获取对象1
-var a = Singleton.getInstance('a')
-// 获取对象2
-var b = Singleton.getInstance('b')
-// 进行比较
-console.info(a, b)
-```
-
-当然也可以使用 ES6 的 `class`
-
-```javascript
-class Singleton {
-    constructor(name) {
-        this.name = name
-    }
-
-    getName() {
-        console.info(this.name)
-    }
-
-    getInstance = (function(){
-        let instance = null
-        return function(name) {
-            if(!instance) {
-                instance = new Singleton(name)
-            }
-            return instance
-        }   
-    })()
-}
-
-// 获取对象1
-var a = Singleton.getInstance('a')
-// 获取对象2
-var b = Singleton.getInstance('b')
-// 进行比较
-console.info(a, b)
-```
-
-但是此方法必须要使用 `Singleton.getInstance()` 才能获取到想要的实例，这与我们习以为常的 `new`  关键字获取实例对象有很大区别。其实这种方法的实现思路就是用构造函数中的一个方法去控制此构造函数生成的实例为单例，既然我们想要用 `new`关键字来生成单例，那我们为何不用另一个构造函数来控制此构造函数的创建呢
-
-### 使用另一个构造函数
-
-```javascript
-class Person {
-    constructor(name) {
-        this.name = name
-    }
-    getName() {
-        return this.name
-    }
-}
-
-const Singleton = (function() {
-    let instance
-    return function(name) {
-        if(!instance) {
-            instance = new Person(name)
-        }
-        return instance
-    }
-})()
-
-
-// 获取对象1
-let a = new Singleton('a')
-let b = new Singleton('b')
-console.info(a === b) // true
-
-```
-
-以上中间控制方法或类中的构造函数都是固定的，也就是说我们需要为不同的构造函数编写不同的中间方法或类，这样显然是不合理的。
-
-### 通用的单例中间类「实际应用」
-
-我发现现在流传在网上的基本上是如下这种
+我们编写一个生成单例类的通用类
 
 ```javascript
 // 获取单独的实例
@@ -219,6 +100,4 @@ const dog = AnimalSingleton('dog')
 console.info(zhangSan.getName()) // 'liSi'
 console.info(dog.getName()) // 'cat'
 ```
-
-参考链接: [https://segmentfault.com/a/1190000012842251](https://segmentfault.com/a/1190000012842251)
 
