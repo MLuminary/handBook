@@ -4,24 +4,31 @@ description: 享元模式是一种用于性能优化的模式。享元模式的�
 
 # 享元模式
 
-### 用例
+## 模式动机
+
+面向对象技术可以很好地解决一些灵活性或可扩展性问题，但在很多情况下需要在系统中增加类和对象的个数。**当对象数量太多时，将导致运行代价过高，带来性能下降等问题**，享元模式正是为解决这一类问题而诞生的
+
+## 实现
 
 假设有个内衣工厂，目前的产品有 50 种男式内衣和 50 种女士内衣，为了推销产品，工厂决 定生产一些塑料模特来穿上他们的内衣拍成广告照片。 正常情况下需要 50 个男模特和 50 个女模特，然后让他们每人分别穿上一件内衣来拍照。不使用享元模式的情况下，在程序里也许会这样写:
 
 ```javascript
-var Model = function(sex, underwear) {
+const Model = function(sex, underwear) {
   this.sex = sex
   this.underwear = underwear
 }
+
 Model.prototype.takePhoto = function() {
   console.log('sex= ' + this.sex + ' underwear=' + this.underwear)
 }
+
 for (var i = 1; i <= 50; i++) {
-  var maleModel = new Model('male', 'underwear' + i)
+  const maleModel = new Model('male', 'underwear' + i)
   maleModel.takePhoto()
 }
+
 for (var j = 1; j <= 50; j++) {
-  var femaleModel = new Model('female', 'underwear' + j)
+  const femaleModel = new Model('female', 'underwear' + j)
   femaleModel.takePhoto()
 }
 ```
@@ -31,19 +38,23 @@ for (var j = 1; j <= 50; j++) {
 代码如下：
 
 ```javascript
-var Model = function(sex) {
+const Model = function(sex) {
   this.sex = sex
 }
+
 Model.prototype.takePhoto = function() {
   console.log('sex= ' + this.sex + ' underwear=' + this.underwear)
 }
-var maleModel = new Model('male'),
+
+const maleModel = new Model('male'),
   femaleModel = new Model('female')
-for (var i = 1; i <= 50; i++) {
+  
+for (let i = 1; i <= 50; i++) {
   maleModel.underwear = 'underwear' + i
   maleModel.takePhoto()
 }
-for (var j = 1; j <= 50; j++) {
+
+for (let j = 1; j <= 50; j++) {
   femaleModel.underwear = 'underwear' + j
   femaleModel.takePhoto()
 }
@@ -62,7 +73,7 @@ for (var j = 1; j <= 50; j++) {
 
 这样一来，我们便可以把所有内部状态相同的对象都指定为同一个对象，而外部状态可以从对象身上剥离出来，并储存在外部
 
-在上面的例子中，**性别是内部状态，内衣是外部状态，通过区分这两种状态，大大减少了系统中的对象数量**。通常来讲，内部状态有多少种组合，系统中便最多存在多少个对象，**因为性别通常只有男女两种，所以该内衣厂商最多只需要 2 个对象**
+在上面的例子中，**性别是内部状态，内衣是外部状态，通过区分这两种状态，大大减少了系统中的对象数量**。通常来讲，**内部状态有多少种组合，系统中便最多存在多少个对象**，因为性别通常只有男女两种，所以该内衣厂商最多只需要 2 个对象
 
 ### 享元模式适用性
 
@@ -73,7 +84,7 @@ for (var j = 1; j <= 50; j++) {
 * 对象的大多数状态都可以变为外部状态
 * 剥离出对象的外部状态后，可以用相对较少的共享对象取代大量对象
 
-享元模式的关键是区别内部状态和外部状态，并剥离外部状态保存在其他地方，**在合适的时刻再把外部状态组装进共享对象**
+**享元模式的关键是区别内部状态和外部状态，并剥离外部状态保存在其他地方，在合适的时刻再把外部状态组装进共享对象**
 
 ## 小结
 
